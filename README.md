@@ -1,8 +1,8 @@
-# DataJud API
+# JusConsult API
 
 ## 📋 Descrição do Projeto
 
-A **DataJud API** é uma aplicação Flask que fornece uma interface REST para consulta e gerenciamento de dados de processos judiciais obtidos através da API pública do DataJud (Conselho Nacional de Justiça). A aplicação permite:
+A **JusConsult API** é uma aplicação Flask que fornece uma interface REST para consulta e gerenciamento de dados de processos judiciais obtidos através da API pública do DataJud (Conselho Nacional de Justiça). A aplicação permite:
 
 - Consulta de processos judiciais por número
 - Visualização de movimentações processuais
@@ -19,7 +19,7 @@ graph TB
         UI[Interface Web<br/>datajud-ui]
     end
     
-    subgraph "Backend - DataJud API"
+    subgraph "Backend - JusConsult API"
         API[Flask Application<br/>app.py]
         SWAGGER[Swagger UI<br/>Documentação]
     end
@@ -74,7 +74,7 @@ graph TB
 
 ```bash
 git clone <url-do-repositorio>
-cd datajud-api
+cd jusconsult-api
 ```
 
 ### 2. Criação do Ambiente Virtual
@@ -102,7 +102,7 @@ Crie um arquivo `.env` na raiz do projeto (opcional):
 
 ```env
 # Configurações do banco de dados
-DATAJUD_DB_PATH=datajud_processos.db
+JUSCONSULT_DB_PATH=jusconsult_processos.db
 
 # Configurações do Flask
 FLASK_ENV=development
@@ -205,7 +205,7 @@ python dataframe_utils.py
 ## 📁 Estrutura do Projeto
 
 ```
-datajud-api/
+jusconsult-api/
 ├── app.py                 # Aplicação Flask principal
 ├── database.py            # Script de atualização do banco
 ├── utils.py               # Utilitários de conexão
@@ -213,7 +213,7 @@ datajud-api/
 ├── check_db.py            # Script de verificação do banco
 ├── requirements.txt       # Dependências Python
 ├── processos.xlsx         # Lista de processos (exemplo)
-├── datajud_processos.db   # Banco SQLite (gerado)
+├── jusconsult_processos.db   # Banco SQLite (gerado)
 └── README.md              # Este arquivo
 ```
 
@@ -247,7 +247,7 @@ Armazena movimentações processuais:
 
 | Variável | Descrição | Padrão |
 |----------|-----------|---------|
-| `DATAJUD_DB_PATH` | Caminho do banco SQLite | `datajud_processos.db` |
+| `JUSCONSULT_DB_PATH` | Caminho do banco SQLite | `jusconsult_processos.db` |
 | `FLASK_ENV` | Ambiente Flask | `production` |
 | `FLASK_RUN_HOST` | Host de execução | `0.0.0.0` |
 | `FLASK_RUN_PORT` | Porta de execução | `5000` |
@@ -267,7 +267,7 @@ Armazena movimentações processuais:
 1. **Banco não encontrado**
    ```bash
    # Verificar se o arquivo existe
-   ls -la datajud_processos.db
+   ls -la jusconsult_processos.db
    
    # Executar database.py para criar
    python database.py
@@ -341,4 +341,4 @@ Para suporte e dúvidas:
 
 ---
 
-**DataJud API** - Interface REST para consulta de processos judiciais via API do CNJ
+**JusConsult API** - Interface REST para consulta de processos judiciais via API do CNJ
