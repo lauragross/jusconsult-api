@@ -1,0 +1,29 @@
+# Web Framework
+Flask>=2.3.0
+Flask-CORS>=4.0.0
+flasgger>=0.9.7
+
+# Core HTTP and API processing
+requests>=2.31.0
+
+# Date/time utilities
+python-dateutil>=2.9.0
+
+# Data processing and analysis
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Database operations
+sqlalchemy>=2.0.0
+
+# XML processing (if needed for future features)
+lxml>=5.1.0
+
+# Standard library dependencies (usually included with Python)
+# sqlite3 - built-in
+# json - built-in
+# os - built-in
+# re - built-in
+# time - built-in
+# sys - built-in
+# datetime - built-in
