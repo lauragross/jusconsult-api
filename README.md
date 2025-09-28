@@ -1,6 +1,6 @@
 # JusConsult API
 
-## 📋 Descrição do Projeto
+## Descrição do Projeto
 
 A **JusConsult API** é uma aplicação Flask que fornece uma interface REST para consulta e gerenciamento de dados de processos judiciais obtidos através da API pública do DataJud (Conselho Nacional de Justiça). A aplicação permite:
 
@@ -11,58 +11,34 @@ A **JusConsult API** é uma aplicação Flask que fornece uma interface REST par
 - Atualização automática do banco de dados
 - Interface web para visualização dos dados
 
-## 🏗️ Arquitetura da Aplicação
+## Arquitetura da Aplicação
 
 ```mermaid
 graph TB
     subgraph "Frontend"
-        UI[Interface Web<br/>datajud-ui]
+        UI[Interface Web]
     end
     
-    subgraph "Backend - JusConsult API"
-        API[Flask Application<br/>app.py]
-        SWAGGER[Swagger UI<br/>Documentação]
+    subgraph "Backend"
+        API[Flask API]
     end
     
-    subgraph "Processamento de Dados"
-        DB_SCRIPT[database.py<br/>Script de Atualização]
-        EXCEL[processos.xlsx<br/>Lista de Processos]
+    subgraph "Dados"
+        EXCEL[Excel<br/>Lista de Processos]
+        SQLITE[(SQLite Database)]
     end
     
-    subgraph "Armazenamento"
-        SQLITE[(SQLite Database<br/>datajud_processos.db)]
-        TABLES[processos<br/>movimentos<br/>processos_lista]
+    subgraph "Externo"
+        DATAJUD[DataJud API<br/>CNJ]
     end
     
-    subgraph "APIs Externas"
-        DATAJUD[DataJud API<br/>CNJ - Tribunais]
-    end
-    
-    subgraph "Utilitários"
-        UTILS[utils.py<br/>Conexões DB]
-        DF_UTILS[dataframe_utils.py<br/>Cache e Filtros]
-        CHECK[check_db.py<br/>Verificação]
-    end
-    
-    UI -->|HTTP Requests| API
-    API --> SWAGGER
-    API --> UTILS
-    API --> DF_UTILS
-    UTILS --> SQLITE
-    DF_UTILS --> SQLITE
-    SQLITE --> TABLES
-    
-    DB_SCRIPT -->|Lê| EXCEL
-    DB_SCRIPT -->|Consulta| DATAJUD
-    DB_SCRIPT -->|Salva| SQLITE
-    
-    CHECK -->|Verifica| SQLITE
-    
-    API -->|Upload/Update| DB_SCRIPT
-    API -->|Streaming| DB_SCRIPT
+    UI --> API
+    API --> SQLITE
+    API --> EXCEL
+    API --> DATAJUD
 ```
 
-## 🚀 Instalação e Configuração
+## Instalação e Configuração
 
 ### Pré-requisitos
 
@@ -127,7 +103,7 @@ Este comando irá:
 - Consultar a API do DataJud para cada processo do arquivo Excel
 - Salvar os dados no banco local
 
-## 🏃‍♂️ Executando a Aplicação
+## Executando a Aplicação
 
 ```bash
 # Executar a aplicação
@@ -138,7 +114,7 @@ A aplicação estará disponível em:
 - **API**: http://localhost:5000
 - **Documentação Swagger**: http://localhost:5000/apidocs
 
-## 📚 Endpoints da API
+## Endpoints da API
 
 ### Processos
 
@@ -186,7 +162,7 @@ A aplicação estará disponível em:
 | POST | `/clear-database` | Limpa banco de dados |
 | POST | `/update-filter-lists` | Atualiza listas de filtros |
 
-## 🔧 Comandos Úteis
+## Comandos Úteis
 
 ### Verificação do Banco
 
@@ -202,7 +178,7 @@ python check_db.py
 python dataframe_utils.py
 ```
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 jusconsult-api/
@@ -217,7 +193,7 @@ jusconsult-api/
 └── README.md              # Este arquivo
 ```
 
-## 🗄️ Estrutura do Banco de Dados
+## Estrutura do Banco de Dados
 
 ### Tabela `processos`
 Armazena informações principais dos processos:
@@ -241,7 +217,7 @@ Armazena movimentações processuais:
 - `primeiraInclusao`: Data da primeira inclusão
 - `ultimoUpdate`: Data da última atualização
 
-## ⚙️ Configurações Avançadas
+## Configurações Avançadas
 
 ### Variáveis de Ambiente
 
@@ -259,85 +235,6 @@ Armazena movimentações processuais:
 2. **Busca Otimizada**: Se o Excel contém coluna `tribunal`, busca apenas no tribunal específico
 3. **Paginação**: Endpoints suportam paginação com `limit` e `offset`
 4. **Streaming**: Atualização do banco com feedback em tempo real
-
-## 🐛 Solução de Problemas
-
-### Problemas Comuns
-
-1. **Banco não encontrado**
-   ```bash
-   # Verificar se o arquivo existe
-   ls -la jusconsult_processos.db
-   
-   # Executar database.py para criar
-   python database.py
-   ```
-
-2. **Erro de conexão com DataJud**
-   - Verificar conexão com internet
-   - Verificar se a API está disponível
-   - Verificar chave de API
-
-3. **Arquivo Excel não encontrado**
-   - O arquivo `processos.xlsx` já está incluído no repositório
-   - Verificar se o arquivo está na raiz do projeto
-
-4. **Erro de dependências**
-   ```bash
-   # Reinstalar dependências
-   pip install -r requirements.txt --force-reinstall
-   ```
-
-### Logs e Debug
-
-```bash
-# Executar com logs detalhados
-FLASK_ENV=development python app.py
-
-# Verificar logs do banco
-python check_db.py
-```
-
-## 📝 Exemplos de Uso
-
-### Consultar Processos
-
-```bash
-# Listar todos os processos
-curl "http://localhost:5000/processos"
-
-# Filtrar por tribunal
-curl "http://localhost:5000/processos?tribunal=TJSP"
-
-# Filtrar por categoria
-curl "http://localhost:5000/processos?categoria=Cível"
-
-# Com paginação
-curl "http://localhost:5000/processos?limit=10&offset=0"
-```
-
-### Upload de Arquivo
-
-```bash
-# Upload de arquivo Excel
-curl -X POST -F "file=@processos.xlsx" http://localhost:5000/upload-processos
-
-# Atualizar banco
-curl -X POST http://localhost:5000/update-database
-```
-
-### Consultar Movimentações
-
-```bash
-# Movimentações de um processo
-curl "http://localhost:5000/movimentos/1234567-89.2023.1.01.0001"
-```
-
-## 📞 Suporte
-
-Para suporte e dúvidas:
-- Consulte a documentação Swagger em `/apidocs`
-- Verifique os logs da aplicação
 
 ---
 
