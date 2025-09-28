@@ -9,7 +9,7 @@ __pycache__/
 datajud_processos.db
 
 # Environment variables
-.env
+.venv
 
 # IDE files
 .vscode/
