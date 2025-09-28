@@ -392,7 +392,7 @@ def main():
 
         # Iterar e consultar cada número no tribunal específico
         for i, numero in enumerate(numeros_excel, 1):
-            print(f"[{i}/{len(numeros_excel)}] Processando {numero}...")
+            print(f"[{i}/{len(numeros_excel)}] Processando {numero}...", flush=True)
             encontrado = False
             
             # Obter dados do processo
@@ -412,15 +412,15 @@ def main():
                             grava_sqlite(dfp, dfm, db_path)
                             # registra no índice mestre (processos_lista)
                             insere_na_processos_lista(numero, tribunal_especifico, db_path)
-                            print(f"[OK] {numero} encontrado em {tribunal_especifico}")
+                            print(f"[OK] {numero} encontrado em {tribunal_especifico}", flush=True)
                             total_ok += 1
                             encontrado = True
                         else:
-                            print(f"[AVISO] {numero} nao encontrado em {tribunal_especifico}")
+                            print(f"[AVISO] {numero} nao encontrado em {tribunal_especifico}", flush=True)
                     else:
-                        print(f"[AVISO] {numero} erro em {tribunal_especifico}: {resp}")
+                        print(f"[AVISO] {numero} erro em {tribunal_especifico}: {resp}", flush=True)
                 except Exception as e:
-                    print(f"[AVISO] {numero} erro em {tribunal_especifico}: {str(e)}")
+                    print(f"[AVISO] {numero} erro em {tribunal_especifico}: {str(e)}", flush=True)
                     
                 time.sleep(sleep_between)
                 
@@ -440,20 +440,20 @@ def main():
                                 grava_sqlite(dfp, dfm, db_path)
                                 # registra no índice mestre (processos_lista)
                                 insere_na_processos_lista(numero, trib, db_path)
-                                print(f"[OK] {numero} encontrado em {trib}")
+                                print(f"[OK] {numero} encontrado em {trib}", flush=True)
                                 total_ok += 1
                                 encontrado = True
                                 break
                         else:
                             # loga erro, segue para próximo tribunal
-                            print(f"[AVISO] {numero} erro em {trib}: {resp}")
+                            print(f"[AVISO] {numero} erro em {trib}: {resp}", flush=True)
                     except Exception as e:
-                        print(f"[AVISO] {numero} erro em {trib}: {str(e)}")
+                        print(f"[AVISO] {numero} erro em {trib}: {str(e)}", flush=True)
                         
                     time.sleep(sleep_between)
 
                 if not encontrado:
-                    print(f"[ERRO] {numero} nao encontrado")
+                    print(f"[ERRO] {numero} nao encontrado", flush=True)
                     total_nao_encontrados += 1
 
         # Verificar estado final do banco
@@ -462,19 +462,16 @@ def main():
             count_after = con.execute(text("SELECT COUNT(*) FROM processos")).fetchone()[0]
             count_movimentos = con.execute(text("SELECT COUNT(*) FROM movimentos")).fetchone()[0]
         
-        print(f"\nCONCLUIDO!")
-        print(f"Processos encontrados: {total_ok}")
+        print(f"\nCONCLUIDO!", flush=True)
+        print(f"Processos encontrados: {total_ok}", flush=True)
         if tem_tribunal:
-            print(f"Processos não encontrados no tribunal específico: {total_tribunais_nao_encontrados}")
+            print(f"Processos não encontrados no tribunal específico: {total_tribunais_nao_encontrados}", flush=True)
         else:
-            print(f"Processos não encontrados: {total_nao_encontrados}")
-        print(f"Banco: {db_path}")
-        print(f"Total de processos no banco: {count_after}")
-        print(f"Total de movimentos no banco: {count_movimentos}")
+            print(f"Processos não encontrados: {total_nao_encontrados}", flush=True)
+        print(f"Banco: {db_path}", flush=True)
+        print(f"Total de processos no banco: {count_after}", flush=True)
+        print(f"Total de movimentos no banco: {count_movimentos}", flush=True)
         
-        if tem_tribunal:
-            print(f"\n[OTIMIZACAO] ATIVA: Cada processo foi consultado apenas no tribunal especifico!")
-            print(f"   Isso reduz significativamente o tempo de processamento.")
         
         if count_after == 0:
             print("ATENCAO: Banco ficou vazio! Verifique:")

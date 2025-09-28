@@ -250,7 +250,7 @@ def get_tribunais():
         
         return response
     except Exception as e:
-        print(f"❌ Erro no endpoint /tribunais: {str(e)}")
+        print(f"Erro no endpoint /tribunais: {str(e)}")
         return jsonify({"error": f"Erro ao buscar tribunais: {str(e)}"}), 500
 
 
@@ -285,7 +285,7 @@ def get_categorias():
         
         return response
     except Exception as e:
-        print(f"❌ Erro no endpoint /categorias: {str(e)}")
+        print(f"Erro no endpoint /categorias: {str(e)}")
         return jsonify({"error": f"Erro ao buscar categorias: {str(e)}"}), 500
 
 
@@ -739,15 +739,15 @@ def update_database():
         # Invalidar cache dos dataframes auxiliares após atualização bem-sucedida
         try:
             invalidate_dataframe_cache()
-            print("✅ Cache dos dataframes auxiliares invalidado após atualização do banco")
+            print("Cache dos dataframes auxiliares invalidado após atualização do banco")
             
             # Atualizar listas de filtros (categorias e tribunais)
-            print("🔄 Atualizando listas de filtros...")
+            print("Atualizando listas de filtros...")
             filter_lists = update_filter_lists(DB_PATH, 'processos.xlsx')
-            print(f"✅ Listas atualizadas: {len(filter_lists['categorias'])} categorias, {len(filter_lists['tribunais'])} tribunais")
+            print(f"Listas atualizadas: {len(filter_lists['categorias'])} categorias, {len(filter_lists['tribunais'])} tribunais")
             
         except Exception as cache_error:
-            print(f"⚠️ Erro ao invalidar cache: {str(cache_error)}")
+            print(f"Erro ao invalidar cache: {str(cache_error)}")
         
         # Parsear a saída para extrair estatísticas
         output = result.stdout
@@ -763,8 +763,8 @@ def update_database():
                 processados = int(match.group(1))
         
         # Contar processos encontrados e não encontrados
-        encontrados = output.count("✔")
-        nao_encontrados = output.count("❌")
+        encontrados = output.count("[OK]")
+        nao_encontrados = output.count("[ERRO]")
         
         return jsonify({
             "message": "Banco de dados atualizado com sucesso",
@@ -798,7 +798,7 @@ def update_database_stream():
         import json
         import re
         
-        print(f"🔄 Iniciando update-database-stream em: {os.getcwd()}")
+        print(f"Iniciando update-database-stream em: {os.getcwd()}")
         print(f"📁 Arquivo processos.xlsx existe: {os.path.exists('processos.xlsx')}")
         
         # Verificar se o arquivo processos.xlsx existe
@@ -810,7 +810,7 @@ def update_database_stream():
         def generate():
             try:
                 # Enviar mensagem inicial
-                yield f"data: {json.dumps({'type': 'log', 'message': '🚀 Iniciando atualização do banco de dados...', 'level': 'info'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': 'Iniciando atualização do banco de dados...', 'level': 'info'})}\n\n"
                 
                 # Verificar se o arquivo tem dados
                 try:
@@ -818,18 +818,18 @@ def update_database_stream():
                     # mantém apenas linhas onde numeroProcesso não é vazio
                     df = df[df["numeroProcesso"].notna() & (df["numeroProcesso"] != "")]
                     if df.empty:
-                        yield f"data: {json.dumps({'type': 'log', 'message': '❌ Arquivo Excel está vazio', 'level': 'error'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'message': 'Arquivo Excel está vazio', 'level': 'error'})}\n\n"
                         return
                     if 'numeroProcesso' not in df.columns:
-                        yield f"data: {json.dumps({'type': 'log', 'message': '❌ Arquivo Excel não tem coluna numeroProcesso', 'level': 'error'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'message': 'Arquivo Excel não tem coluna numeroProcesso', 'level': 'error'})}\n\n"
                         return
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'📋 Arquivo Excel tem {len(df)} processos', 'level': 'info'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'Arquivo Excel tem {len(df)} processos', 'level': 'info'})}\n\n"
                 except Exception as e:
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Erro ao ler Excel: {str(e)}', 'level': 'error'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'Erro ao ler Excel: {str(e)}', 'level': 'error'})}\n\n"
                     return
                 
                 # Executar o database.py com streaming
-                yield f"data: {json.dumps({'type': 'log', 'message': '🔄 Executando database.py...', 'level': 'info'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': 'Executando database.py...', 'level': 'info'})}\n\n"
                 
                 process = subprocess.Popen([
                     sys.executable, 'database.py'
@@ -885,32 +885,32 @@ def update_database_stream():
                 
                 # Aguardar o processo terminar
                 return_code = process.wait()
-                yield f"data: {json.dumps({'type': 'log', 'message': f'🏁 Processo finalizado com código: {return_code}', 'level': 'info'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': f'Processo finalizado com código: {return_code}', 'level': 'info'})}\n\n"
                 
                 # Invalidar cache dos dataframes auxiliares se a atualização foi bem-sucedida
                 if return_code == 0:
                     try:
                         invalidate_dataframe_cache()
-                        yield f"data: {json.dumps({'type': 'log', 'message': '🔄 Cache dos dataframes auxiliares invalidado', 'level': 'info'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'message': 'Cache dos dataframes auxiliares invalidado', 'level': 'info'})}\n\n"
                         
                         # Atualizar listas de filtros (categorias e tribunais)
-                        yield f"data: {json.dumps({'type': 'log', 'message': '🔄 Atualizando listas de filtros...', 'level': 'info'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'message': 'Atualizando listas de filtros...', 'level': 'info'})}\n\n"
                         filter_lists = update_filter_lists(DB_PATH, 'processos.xlsx')
                         
                         # Enviar informações sobre as listas atualizadas
                         yield f"data: {json.dumps({'type': 'filter_update', 'categorias': filter_lists['categorias'], 'tribunais': filter_lists['tribunais']})}\n\n"
-                        message = f"✅ Listas atualizadas: {len(filter_lists['categorias'])} categorias, {len(filter_lists['tribunais'])} tribunais"
+                        message = f"Listas atualizadas: {len(filter_lists['categorias'])} categorias, {len(filter_lists['tribunais'])} tribunais"
                         yield f"data: {json.dumps({'type': 'log', 'message': message, 'level': 'success'})}\n\n"
                         
                     except Exception as cache_error:
-                        yield f"data: {json.dumps({'type': 'log', 'message': f'⚠️ Erro ao invalidar cache: {str(cache_error)}', 'level': 'warning'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'message': f'Erro ao invalidar cache: {str(cache_error)}', 'level': 'warning'})}\n\n"
                 
                 # Enviar estatísticas finais
-                yield f"data: {json.dumps({'type': 'log', 'message': '✅ Atualização concluída!', 'level': 'success'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': 'Atualização concluída!', 'level': 'success'})}\n\n"
                 
                 total_found = sum(tribunal_stats.values())
-                yield f"data: {json.dumps({'type': 'log', 'message': f'📊 Total encontrado: {total_found} processos', 'level': 'info'})}\n\n"
-                yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Total não encontrado: {len(not_found_processes)} processos', 'level': 'info'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': f'Total encontrado: {total_found} processos', 'level': 'info'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': f'Total não encontrado: {len(not_found_processes)} processos', 'level': 'info'})}\n\n"
                 
                 # Enviar lista de não encontrados
                 for processo in not_found_processes:
@@ -921,16 +921,16 @@ def update_database_stream():
                     yield f"data: {json.dumps({'type': 'tribunal', 'tribunal': tribunal, 'count': count})}\n\n"
                 
             except Exception as e:
-                yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Erro durante execução: {str(e)}', 'level': 'error'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': f'Erro durante execução: {str(e)}', 'level': 'error'})}\n\n"
                 import traceback
-                yield f"data: {json.dumps({'type': 'log', 'message': f'📋 Traceback: {traceback.format_exc()}', 'level': 'error'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'message': f'Traceback: {traceback.format_exc()}', 'level': 'error'})}\n\n"
         
         return Response(generate(), mimetype='text/event-stream')
         
     except Exception as e:
-        print(f"❌ Erro no update_database_stream: {str(e)}")
+        print(f"Erro no update_database_stream: {str(e)}")
         import traceback
-        print(f"📋 Traceback: {traceback.format_exc()}")
+        print(f"Traceback: {traceback.format_exc()}")
         return jsonify({
             "error": f"Erro ao iniciar atualização: {str(e)}"
         }), 500
@@ -1067,7 +1067,7 @@ def test_categorias():
     ---
     """
     try:
-        print("🧪 Testando função get_unique_categories...")
+        print("Testando função get_unique_categories...")
         categorias = get_unique_categories(DB_PATH, 'processos.xlsx')
         
         return jsonify({
@@ -1077,7 +1077,7 @@ def test_categorias():
             "message": "Teste de categorias executado com sucesso"
         })
     except Exception as e:
-        print(f"❌ Erro no teste de categorias: {str(e)}")
+        print(f"Erro no teste de categorias: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({
@@ -1094,7 +1094,7 @@ def force_update_filters():
     ---
     """
     try:
-        print("🔄 Forçando atualização das listas de filtros...")
+        print("Forçando atualização das listas de filtros...")
         
         # Invalidar cache
         invalidate_dataframe_cache()
@@ -1103,8 +1103,8 @@ def force_update_filters():
         categorias = get_unique_categories(DB_PATH, 'processos.xlsx')
         tribunais = get_unique_tribunals(DB_PATH)
         
-        print(f"✅ Categorias: {categorias}")
-        print(f"✅ Tribunais: {tribunais}")
+        print(f"Categorias: {categorias}")
+        print(f"Tribunais: {tribunais}")
         
         return jsonify({
             "success": True,
@@ -1113,7 +1113,7 @@ def force_update_filters():
             "message": "Listas de filtros atualizadas com sucesso"
         })
     except Exception as e:
-        print(f"❌ Erro ao forçar atualização: {str(e)}")
+        print(f"Erro ao forçar atualização: {str(e)}")
         return jsonify({
             "success": False,
             "error": str(e)
@@ -1130,7 +1130,7 @@ def test_simple_update():
         import sys
         import time
         
-        print(f"🧪 Teste simples iniciado em: {os.getcwd()}")
+        print(f"Teste simples iniciado em: {os.getcwd()}")
         
         # Verificar arquivo
         if not os.path.exists('processos.xlsx'):
@@ -1147,7 +1147,7 @@ def test_simple_update():
             return jsonify({"error": f"Erro ao ler Excel: {str(e)}"}), 400
         
         # Executar database.py
-        print("🔄 Executando database.py...")
+        print("Executando database.py...")
         start_time = time.time()
         
         result = subprocess.run([
@@ -1157,7 +1157,7 @@ def test_simple_update():
         end_time = time.time()
         duration = end_time - start_time
         
-        print(f"✅ database.py executado em {duration:.2f} segundos")
+        print(f"database.py executado em {duration:.2f} segundos")
         print(f"Return code: {result.returncode}")
         
         # Verificar se o banco foi atualizado
